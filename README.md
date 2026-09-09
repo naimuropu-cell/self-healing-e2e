@@ -123,9 +123,14 @@ Run these scripts from the repository root:
 |---|---|
 | `npm run dev` / `npm run app:dev` | Starts the target Vite application locally at `http://localhost:5188` |
 | `npm run app:build` | Type-checks and compiles the target application for production |
-| `npm test` / `npm run test:e2e` | Runs Playwright tests (automatically manages the dev server lifecycle) |
+| `npm test` / `npm run test:e2e` | Runs full Playwright test suite (auto-manages Vite server) |
 | `npm run test:e2e:ui` | Launches Playwright's interactive UI Test Runner |
-| `npm run test:report` | Opens the latest Playwright HTML Test Report in your browser |
+| `npm run test:report` | Opens the latest Playwright HTML Test Report |
+| `npm run test:visual` | Runs visual regression snapshot comparison suite |
+| `npm run test:visual:update` | Re-generates visual regression baseline snapshots |
+| `npm run heal:report` | Displays the terminal self-healing locator audit report |
+| `npm run heal:apply` | Auto-patches Page Objects with verified healed selectors |
+| `npm run bug:triage` | Ingests defect tickets, verifies specs, and auto-scaffolds repro tests |
 
 ---
 

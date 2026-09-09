@@ -14,6 +14,7 @@
     "test:visual:update": "npm --prefix tests run test -- e2e/visual.spec.ts --update-snapshots",
     "heal:report": "node tests/utils/healing-reporter.js",
     "heal:apply": "node tests/utils/heal-patcher.js",
+    "bug:triage": "node tests/utils/defect-triage.js",
     "dev": "npm run app:dev",
     "test": "npm run test:e2e"
   },
