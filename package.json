@@ -10,6 +10,7 @@
     "test:e2e": "npm --prefix tests run test",
     "test:e2e:ui": "npm --prefix tests run test:ui",
     "test:report": "npm --prefix tests run test:report",
+    "heal:report": "node tests/utils/healing-reporter.js",
     "dev": "npm run app:dev",
     "test": "npm run test:e2e"
   },

@@ -618,7 +618,7 @@ export const App: React.FC = () => {
                 <span data-testid="checkout-total-price">${finalCartTotal.toFixed(2)}</span>
               </div>
 
-              <button type="submit" className="btn-primary" data-testid="submit-order">
+              <button type="submit" className="btn-primary" data-testid="complete-purchase-btn">
                 <span>Place Order (${finalCartTotal.toFixed(2)})</span>
                 <CheckCircle2 size={18} />
               </button>

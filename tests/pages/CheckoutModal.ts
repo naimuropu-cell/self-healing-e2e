@@ -1,4 +1,5 @@
 import { Page, Locator, expect } from '@playwright/test';
+import { SelfHealingEngine, SelfHealingDescriptor } from '../utils/self-healing';
 
 export interface CheckoutDetails {
   fullName: string;
@@ -19,7 +20,6 @@ export class CheckoutModal {
   readonly cityInput: Locator;
   readonly zipInput: Locator;
   readonly cardInput: Locator;
-  readonly submitButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -31,7 +31,6 @@ export class CheckoutModal {
     this.cityInput = page.getByTestId('input-city');
     this.zipInput = page.getByTestId('input-zip');
     this.cardInput = page.getByTestId('input-card');
-    this.submitButton = page.getByTestId('submit-order');
   }
 
   async fillDetails(details: CheckoutDetails) {
@@ -46,7 +45,16 @@ export class CheckoutModal {
   }
 
   async submitOrder() {
-    await this.submitButton.click();
+    const submitOrderDescriptor: SelfHealingDescriptor = {
+      name: 'Place Order Button',
+      primary: { type: 'testid', value: 'submit-order' },
+      fallbacks: [
+        { type: 'testid', value: 'complete-purchase-btn' },
+        { type: 'role', value: 'button', options: { name: /place order/i } },
+        { type: 'css', value: 'button[type="submit"].btn-primary' },
+      ],
+    };
+    await SelfHealingEngine.click(this.page, submitOrderDescriptor);
   }
 
   async close() {

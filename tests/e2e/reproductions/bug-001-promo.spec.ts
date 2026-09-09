@@ -1,11 +1,12 @@
 import { test, expect } from '@playwright/test';
-import { LoginPage, CatalogPage, CartModal } from '../../pages';
+import { LoginPage, CatalogPage, CartModal, CheckoutModal } from '../../pages';
 
 test.describe('Reproduction Suite: BUG-001 Promo Code Discount', () => {
   test('should apply 20% discount with promo code QA20 and update order total', async ({ page }) => {
     const loginPage = new LoginPage(page);
     const catalogPage = new CatalogPage(page);
     const cartModal = new CartModal(page);
+    const checkoutModal = new CheckoutModal(page);
 
     // 1. Login and add $199.99 item to cart
     await loginPage.goto();
@@ -38,7 +39,7 @@ test.describe('Reproduction Suite: BUG-001 Promo Code Discount', () => {
     await expect(checkoutTotal).toHaveText('$159.99');
 
     // 6. Submit the order and verify receipt reflects discounted total
-    await page.getByTestId('submit-order').click();
+    await checkoutModal.submitOrder();
     await expect(page.getByTestId('order-success-screen')).toBeVisible();
 
     const receiptTotal = page.getByTestId('order-receipt-total');
