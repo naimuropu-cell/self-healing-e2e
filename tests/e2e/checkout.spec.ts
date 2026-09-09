@@ -1,43 +1,48 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
+import {
+  LoginPage,
+  CatalogPage,
+  CartModal,
+  CheckoutModal,
+  OrderConfirmationPage,
+} from '../pages';
 
 test.describe('E2E Store Journey: Authentication & Checkout', () => {
   test('should allow a user to log in, add product to cart, and complete checkout', async ({ page }) => {
-    // 1. Visit the store application
-    await page.goto('/');
-    await expect(page.getByTestId('app-logo')).toBeVisible();
+    const loginPage = new LoginPage(page);
+    const catalogPage = new CatalogPage(page);
+    const cartModal = new CartModal(page);
+    const checkoutModal = new CheckoutModal(page);
+    const orderConfirmationPage = new OrderConfirmationPage(page);
 
-    // 2. Perform authentication
-    await page.getByTestId('login-username').fill('demo_user');
-    await page.getByTestId('login-password').fill('password123');
-    await page.getByTestId('login-submit').click();
+    // 1. Visit application & login
+    await loginPage.goto();
+    await loginPage.login('demo_user', 'password123');
 
-    // 3. Verify user enters catalog
-    await expect(page.getByTestId('product-grid')).toBeVisible();
-    await expect(page.getByTestId('product-card-prod-001')).toBeVisible();
+    // 2. Verify catalog & add product
+    await catalogPage.assertCatalogVisible();
+    await catalogPage.assertProductVisible('prod-001');
+    await catalogPage.addProductToCart('prod-001');
+    await catalogPage.assertCartBadgeCount(1);
 
-    // 4. Add product to cart
-    await page.getByTestId('add-to-cart-button-prod-001').click();
-    await expect(page.getByTestId('cart-badge')).toHaveText('1');
+    // 3. Open cart and proceed to checkout
+    await catalogPage.openCart();
+    await cartModal.assertModalVisible();
+    await cartModal.assertItemPresent('prod-001');
+    await cartModal.proceedToCheckout();
 
-    // 5. Open cart and proceed to checkout
-    await page.getByTestId('cart-button').click();
-    await expect(page.getByTestId('cart-modal')).toBeVisible();
-    await expect(page.getByTestId('cart-item-prod-001')).toBeVisible();
-    await page.getByTestId('proceed-to-checkout').click();
+    // 4. Fill checkout details and submit order
+    await checkoutModal.assertModalVisible();
+    await checkoutModal.fillDetails({
+      fullName: 'Alice Quality',
+      email: 'alice@qa-corp.internal',
+      address: '404 Automation Blvd',
+      city: 'Austin',
+      postalCode: '78701',
+    });
+    await checkoutModal.submitOrder();
 
-    // 6. Complete and submit checkout form
-    await expect(page.getByTestId('checkout-modal')).toBeVisible();
-    await page.getByTestId('input-name').fill('Alice Quality');
-    await page.getByTestId('input-email').fill('alice@qa-corp.internal');
-    await page.getByTestId('input-address').fill('404 Automation Blvd');
-    await page.getByTestId('input-city').fill('Austin');
-    await page.getByTestId('input-zip').fill('78701');
-    await page.getByTestId('submit-order').click();
-
-    // 7. Verify order confirmation and order ID
-    await expect(page.getByTestId('order-success-screen')).toBeVisible();
-    const orderIdLocator = page.getByTestId('order-id');
-    await expect(orderIdLocator).toBeVisible();
-    await expect(orderIdLocator).toHaveText(/^ORD-\d+$/);
+    // 5. Verify order receipt
+    await orderConfirmationPage.assertOrderConfirmed();
   });
 });
