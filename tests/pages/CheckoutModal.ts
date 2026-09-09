@@ -47,7 +47,7 @@ export class CheckoutModal {
   async submitOrder() {
     const submitOrderDescriptor: SelfHealingDescriptor = {
       name: 'Place Order Button',
-      primary: { type: 'testid', value: 'submit-order' },
+      primary: { type: 'testid', value: 'complete-purchase-btn' },
       fallbacks: [
         { type: 'testid', value: 'complete-purchase-btn' },
         { type: 'role', value: 'button', options: { name: /place order/i } },

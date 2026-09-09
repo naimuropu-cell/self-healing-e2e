@@ -3,10 +3,6 @@ import { LoginPage, CatalogPage } from '../pages';
 import { SelfHealingEngine, SelfHealingDescriptor } from '../utils/self-healing';
 
 test.describe('Autonomous Self-Healing Engine Demonstration', () => {
-  test.beforeEach(() => {
-    SelfHealingEngine.clearAuditEntries();
-  });
-
   test('should resolve primary locator quickly when valid without triggering fallback', async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.goto();
