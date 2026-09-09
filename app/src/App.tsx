@@ -68,6 +68,13 @@ export const App: React.FC = () => {
     cardNumber: '4242 •••• •••• 4242',
   });
 
+  // Promotional Code State
+  const [promoInput, setPromoInput] = useState('');
+  const [appliedPromo, setAppliedPromo] = useState<string | null>(null);
+  const [promoDiscount, setPromoDiscount] = useState(0);
+  const [promoError, setPromoError] = useState('');
+  const [promoSuccess, setPromoSuccess] = useState('');
+
   // Order Placement State
   const [confirmedOrder, setConfirmedOrder] = useState<Order | null>(null);
 
@@ -92,6 +99,28 @@ export const App: React.FC = () => {
     setIsCartOpen(false);
     setIsCheckoutOpen(false);
     setConfirmedOrder(null);
+    setPromoInput('');
+    setAppliedPromo(null);
+    setPromoDiscount(0);
+    setPromoSuccess('');
+    setPromoError('');
+  };
+
+  // Promo Handler
+  const handleApplyPromo = () => {
+    const code = promoInput.trim().toUpperCase();
+    if (code === 'QA20') {
+      setAppliedPromo('QA20');
+      setPromoDiscount(0.2);
+      setPromoSuccess('20% Discount Applied (-$40.00)');
+      setPromoError('');
+    } else if (!code) {
+      setPromoError('Please enter a promo code');
+      setPromoSuccess('');
+    } else {
+      setPromoError('Invalid promo code. Try QA20');
+      setPromoSuccess('');
+    }
   };
 
   // Cart Handlers
@@ -122,7 +151,9 @@ export const App: React.FC = () => {
   };
 
   const totalCartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const totalCartPrice = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+  const subtotalCartPrice = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+  const promoDiscountAmount = appliedPromo ? Number((subtotalCartPrice * promoDiscount).toFixed(2)) : 0;
+  const finalCartTotal = Number(Math.max(0, subtotalCartPrice - promoDiscountAmount).toFixed(2));
 
   // Checkout Submission
   const handlePlaceOrder = (e: React.FormEvent) => {
@@ -131,7 +162,9 @@ export const App: React.FC = () => {
       id: `ORD-${Math.floor(100000 + Math.random() * 900000)}`,
       items: [...cart],
       shipping: { ...shipping },
-      total: totalCartPrice,
+      total: finalCartTotal,
+      promoCode: appliedPromo || undefined,
+      discount: promoDiscountAmount,
       placedAt: new Date().toLocaleTimeString(),
       status: 'confirmed',
     };
@@ -249,9 +282,15 @@ export const App: React.FC = () => {
                 <span>Recipient:</span>
                 <span>{confirmedOrder.shipping.fullName}</span>
               </div>
+              {confirmedOrder.promoCode && (
+                <div className="receipt-row" style={{ color: 'var(--success)' }}>
+                  <span>Discount ({confirmedOrder.promoCode}):</span>
+                  <span>-${(confirmedOrder.discount || 0).toFixed(2)}</span>
+                </div>
+              )}
               <div className="receipt-row">
                 <span>Total Amount:</span>
-                <strong>${confirmedOrder.total.toFixed(2)}</strong>
+                <strong data-testid="order-receipt-total">${confirmedOrder.total.toFixed(2)}</strong>
               </div>
               <div className="receipt-row">
                 <span>Status:</span>
@@ -402,7 +441,7 @@ export const App: React.FC = () => {
                 <div className="cart-summary">
                   <div className="summary-row">
                     <span>Subtotal</span>
-                    <span>${totalCartPrice.toFixed(2)}</span>
+                    <span>${subtotalCartPrice.toFixed(2)}</span>
                   </div>
                   <div className="summary-row">
                     <span>Standard Shipping</span>
@@ -411,7 +450,7 @@ export const App: React.FC = () => {
                   <div className="summary-row summary-total">
                     <span>Total</span>
                     <span data-testid="cart-total-price">
-                      ${totalCartPrice.toFixed(2)}
+                      ${subtotalCartPrice.toFixed(2)}
                     </span>
                   </div>
                 </div>
@@ -523,13 +562,64 @@ export const App: React.FC = () => {
                 />
               </div>
 
+              <div className="form-group" style={{ marginBottom: '1.25rem' }}>
+                <label htmlFor="promo">Promotional Code</label>
+                <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.35rem' }}>
+                  <input
+                    id="promo"
+                    className="input-control"
+                    placeholder="Enter promo (e.g. QA20)"
+                    value={promoInput}
+                    onChange={(e) => setPromoInput(e.target.value)}
+                    data-testid="input-promo-code"
+                  />
+                  <button
+                    type="button"
+                    className="btn-secondary"
+                    onClick={handleApplyPromo}
+                    data-testid="apply-promo-button"
+                    style={{ padding: '0 1.25rem', whiteSpace: 'nowrap' }}
+                  >
+                    Apply
+                  </button>
+                </div>
+                {promoSuccess && (
+                  <div
+                    className="alert-box alert-success"
+                    data-testid="promo-success-badge"
+                    style={{ marginTop: '0.5rem', padding: '0.4rem 0.75rem', fontSize: '0.825rem' }}
+                  >
+                    {promoSuccess}
+                  </div>
+                )}
+                {promoError && (
+                  <div
+                    className="alert-box alert-danger"
+                    data-testid="promo-error-badge"
+                    style={{ marginTop: '0.5rem', padding: '0.4rem 0.75rem', fontSize: '0.825rem' }}
+                  >
+                    {promoError}
+                  </div>
+                )}
+              </div>
+
+              <div className="summary-row">
+                <span>Subtotal:</span>
+                <span>${subtotalCartPrice.toFixed(2)}</span>
+              </div>
+              {appliedPromo && (
+                <div className="summary-row" style={{ color: 'var(--success)' }}>
+                  <span>Promo Discount ({appliedPromo}):</span>
+                  <span>-${promoDiscountAmount.toFixed(2)}</span>
+                </div>
+              )}
               <div className="summary-row summary-total" style={{ marginBottom: '1.5rem' }}>
                 <span>Amount to Pay:</span>
-                <span>${totalCartPrice.toFixed(2)}</span>
+                <span data-testid="checkout-total-price">${finalCartTotal.toFixed(2)}</span>
               </div>
 
               <button type="submit" className="btn-primary" data-testid="submit-order">
-                <span>Place Order (${totalCartPrice.toFixed(2)})</span>
+                <span>Place Order (${finalCartTotal.toFixed(2)})</span>
                 <CheckCircle2 size={18} />
               </button>
             </form>

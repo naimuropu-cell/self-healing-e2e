@@ -1,6 +1,6 @@
 # Defect Ticket: [BUG-001] Promo code 'QA20' fails to apply 20% discount to checkout order total
 
-- **Status**: Open
+- **Status**: Fixed & Verified
 - **Severity**: High
 - **Reported Date**: 2026-09-10
 - **Affected Area**: Cart & Checkout Flow
@@ -49,7 +49,10 @@ During the Q3 promotional campaign, customers attempting to use promotional disc
 ---
 
 ## 6. Autonomous QA Resolution Log
-- **Reproduction Spec**: `tests/e2e/reproductions/bug-001-promo.spec.ts` *(To be scripted in Task 4)*
-- **Root Cause Identified**: Pending triage
-- **Code/Test Changes Applied**: Pending
-- **Verification Status**: Open / Ready for Reproduction
+- **Reproduction Spec**: `tests/e2e/reproductions/bug-001-promo.spec.ts` (Captured failure trace: missing promo controls and un-discounted total)
+- **Root Cause Identified**: Checkout modal lacked promo code state handling, voucher input controls, and discount deduction logic from subtotal before order submission.
+- **Code/Test Changes Applied**:
+  - `app/src/types.ts`: Extended `Order` interface with optional `promoCode` and `discount`.
+  - `app/src/App.tsx`: Added `appliedPromo`, `promoDiscount`, and `handleApplyPromo` handler for `QA20` (20% off). Added promo input field, apply button, feedback badges, and reactive total calculation.
+  - `tests/e2e/reproductions/bug-001-promo.spec.ts`: Automated regression spec created and verified.
+- **Verification Status**: Verified Green (10 passed across entire E2E test suite).

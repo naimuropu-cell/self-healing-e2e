@@ -34,6 +34,8 @@ export interface Order {
   items: CartItem[];
   shipping: ShippingDetails;
   total: number;
+  promoCode?: string;
+  discount?: number;
   placedAt: string;
   status: 'confirmed' | 'processing' | 'shipped';
 }
