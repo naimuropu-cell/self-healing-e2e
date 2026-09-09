@@ -44,6 +44,89 @@ flowchart LR
 
 ---
 
+## 🎬 Live Autonomous Pipeline in Action
+
+### 1. Live Self-Healing During Test Execution (`npm test`)
+When frontend developers refactor or rename DOM selectors (e.g. `data-testid`), the test suite **recovers transparently in real time** without failing:
+
+```bash
+$ npm test
+
+Running 16 tests using 1 worker
+
+  ok  1 [chromium] › e2e/auth.spec.ts › should log in successfully with valid credentials (2.6s)
+  ok  2 [chromium] › e2e/cart.spec.ts › should add multiple items and update quantities (2.9s)
+  ok  3 [chromium] › e2e/checkout.spec.ts › should complete user checkout journey (4.0s)
+
+⚠️ [Self-Healing Engine] Primary selector failed for "Add to Cart Button" (testid: "deprecated-legacy-add-to-cart-prod-001")
+   Triggering heuristic fallback recovery...
+✅ [Self-Healing Engine] Recovered target using fallback: [css] "[data-testid="product-card-prod-001"] .btn-add-cart" in 1566ms
+  ok  4 [chromium] › e2e/self-healing.spec.ts › should transparently self-heal broken test-id locator (3.4s)
+
+  16 passed (48.4s) 🟢
+```
+
+### 2. Autonomous Auto-Patcher (`npm run heal:apply`)
+Permanently updates Page Object source code with verified healed selectors, eliminating future fallback latency:
+
+```bash
+$ npm run heal:apply
+
+================================================================
+🛠️   AUTONOMOUS QA: SELF-HEALING AUTO-PATCHER
+================================================================
+
+🔍 Scanning 6 Page Object files for deprecated locators...
+
+✅ [Patched] tests/pages/CheckoutModal.ts
+   Element:  "Place Order Button"
+   Replaced: "submit-order" ➔ "complete-purchase-btn"
+
+🎉 Successfully applied 1 permanent patch(es) across 1 file(s).
+🧹 Cleared applied events from healing audit ledger.
+🚀 Next test run will resolve directly on the primary locator in 0ms!
+```
+
+### 3. Executive Defect Triage Dashboard (`npm run bug:triage`)
+Scans `bug-reports/` tickets, verifies reproduction test coverage, and auto-scaffolds tests for open tickets:
+
+```bash
+$ npm run bug:triage
+
+================================================================
+🐞   AUTONOMOUS QA: DEFECT TRIAGE & INGESTION DASHBOARD
+================================================================
+
+[#1] [BUG-001] Promo code 'QA20' fails to apply 20% discount
+  📌 Status:      🟢 FIXED & VERIFIED
+  ⚡ Severity:    High | Area: Cart & Checkout Flow
+  🧪 Repro Spec:  tests/e2e/reproductions/bug-001-promo.spec.ts (✅ Present)
+
+[#2] [BUG-002] Stock inventory does not decrement on order placement
+  📌 Status:      🟢 FIXED & VERIFIED
+  ⚡ Severity:    Critical | Area: Catalog & Inventory
+  🧪 Repro Spec:  tests/e2e/reproductions/bug-002-inventory.spec.ts (✅ Present)
+
+[#3] [BUG-003] Rapid double-click on 'Place Order' triggers duplicate submissions
+  📌 Status:      🟢 FIXED & VERIFIED
+  ⚡ Severity:    Critical | Area: Checkout Modal
+  🧪 Repro Spec:  tests/e2e/reproductions/bug-003-double-click.spec.ts (✅ Present)
+
+📊 Executive Summary: 3 Resolved & Verified | 0 Active (100% Verified)
+```
+
+### 4. Cloud CI/CD Job Summary (`$GITHUB_STEP_SUMMARY`)
+On every push and pull request, GitHub Actions compiles test diagnostics and renders an interactive dashboard directly on the workflow overview page:
+
+| Metric | Value | Status |
+|---|---|---|
+| **E2E & Self-Healing Tests** | 16 Tests Passed across 6 Suites | 🟢 100% Green |
+| **Self-Healing Interventions** | Transparently Recovered via Fallbacks | 🛡️ Audited |
+| **Defect Ingestion Coverage** | 3/3 Tickets Reproduced & Verified | 🐞 100% Verified |
+| **Visual Regression Baseline** | 4 Viewports Compared | 📸 0 Pixel Drift |
+
+---
+
 ## 📁 Repository Structure
 
 ```
