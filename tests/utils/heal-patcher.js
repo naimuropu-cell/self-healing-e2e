@@ -93,10 +93,21 @@ function runPatcher() {
   } else {
     console.log('ℹ️  No matching Page Object selectors found for pending audit entries.');
   }
+
+  return {
+    totalPatches,
+    patchedFiles: Array.from(patchedFiles),
+    auditEntries,
+  };
 }
 
 function escapeRegex(string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
-runPatcher();
+if (require.main === module) {
+  runPatcher();
+}
+
+module.exports = { runPatcher };
+

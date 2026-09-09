@@ -125,6 +125,38 @@ On every push and pull request, GitHub Actions compiles test diagnostics and ren
 | **Defect Ingestion Coverage** | 3/3 Tickets Reproduced & Verified | 🐞 100% Verified |
 | **Visual Regression Baseline** | 4 Viewports Compared | 📸 0 Pixel Drift |
 
+### 5. Automated Pull Request Bot (`npm run heal:pr`)
+A fully autonomous maintenance agent that bridges runtime locator healing with Git version control. On nightly schedules or manual invocation, the bot tests the app, heals stale Page Object selectors, branches off `main`, commits changes, pushes the branch, and opens an automated Pull Request:
+
+```bash
+$ npm run heal:pr
+
+================================================================
+🤖  AUTONOMOUS QA: AUTOMATED PULL REQUEST BOT (heal:pr)
+================================================================
+
+1️⃣  Executing heal-patcher on Page Objects...
+✅ [Patched] tests/pages/LoginPage.ts
+   Element:  "Login Username Input"
+   Replaced: "broken-username-v2" ➔ "login-username"
+
+2️⃣  Detected 1 modified Page Object file(s):
+   - tests/pages/LoginPage.ts
+
+3️⃣  Current branch: main. Creating branch 'auto-heal/selectors-2026-09-10t00-58-12'...
+✅ Changes committed to 'auto-heal/selectors-2026-09-10t00-58-12'.
+
+4️⃣  Pushing 'auto-heal/selectors-2026-09-10t00-58-12' to origin...
+✅ Successfully pushed 'auto-heal/selectors-2026-09-10t00-58-12' to remote.
+
+5️⃣  Resolving Pull Request options...
+🎉  AUTOMATED PULL REQUEST BRANCH READY ON GITHUB
+🔗 Open this link in your browser to review and merge your PR:
+   https://github.com/naimuropu-cell/self-healing-e2e/compare/main...auto-heal/selectors-2026-09-10t00-58-12?expand=1
+```
+
+> 🤖 **Nightly Autonomous Maintenance**: Configured in [`.github/workflows/auto-heal-pr.yml`](.github/workflows/auto-heal-pr.yml) to run daily at 03:00 UTC, automatically submitting PRs labeled `self-healing` and `qa-maintenance` whenever front-end code evolves.
+
 ---
 
 ## 📁 Repository Structure
@@ -213,6 +245,7 @@ Run these scripts from the repository root:
 | `npm run test:visual:update` | Re-generates visual regression baseline snapshots |
 | `npm run heal:report` | Displays the terminal self-healing locator audit report |
 | `npm run heal:apply` | Auto-patches Page Objects with verified healed selectors |
+| `npm run heal:pr` | Automatically creates branch, commits healed selectors, and opens GitHub PR |
 | `npm run bug:triage` | Ingests defect tickets, verifies specs, and auto-scaffolds repro tests |
 
 ---
