@@ -43,6 +43,10 @@ jobs:
         if: always()
         run: npm run heal:report
 
+      - name: Publish GitHub Actions Job Summary
+        if: always()
+        run: node tests/utils/ci-summary.js
+
       - name: Upload Playwright HTML Test Report
         uses: actions/upload-artifact@v4
         if: always()
