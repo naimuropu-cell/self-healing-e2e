@@ -53,7 +53,7 @@ export const App: React.FC = () => {
   const [authError, setAuthError] = useState('');
 
   // Cart & Catalog State
-  const [products] = useState<Product[]>(INITIAL_PRODUCTS);
+  const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
@@ -125,9 +125,11 @@ export const App: React.FC = () => {
 
   // Cart Handlers
   const addToCart = (product: Product) => {
+    if (product.stock <= 0) return;
     setCart((prevCart) => {
       const existing = prevCart.find((item) => item.product.id === product.id);
       if (existing) {
+        if (existing.quantity >= product.stock) return prevCart;
         return prevCart.map((item) =>
           item.product.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
         );
@@ -141,7 +143,10 @@ export const App: React.FC = () => {
       prevCart
         .map((item) => {
           if (item.product.id === productId) {
+            const product = products.find((p) => p.id === productId);
+            const maxStock = product ? product.stock : 999;
             const newQty = item.quantity + delta;
+            if (newQty > maxStock) return item;
             return newQty > 0 ? { ...item, quantity: newQty } : null;
           }
           return item;
@@ -168,6 +173,18 @@ export const App: React.FC = () => {
       placedAt: new Date().toLocaleTimeString(),
       status: 'confirmed',
     };
+
+    // Decrement stock for purchased items
+    setProducts((prevProducts) =>
+      prevProducts.map((prod) => {
+        const purchasedItem = cart.find((item) => item.product.id === prod.id);
+        if (purchasedItem) {
+          return { ...prod, stock: Math.max(0, prod.stock - purchasedItem.quantity) };
+        }
+        return prod;
+      })
+    );
+
     setConfirmedOrder(newOrder);
     setCart([]);
     setIsCheckoutOpen(false);
@@ -368,13 +385,32 @@ export const App: React.FC = () => {
               <h3 className="product-title">{product.name}</h3>
               <p className="product-description">{product.description}</p>
               <div className="product-footer">
-                <span className="product-price">${product.price.toFixed(2)}</span>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <span className="product-price">${product.price.toFixed(2)}</span>
+                  <span
+                    className="product-stock"
+                    data-testid={`product-stock-${product.id}`}
+                    style={{
+                      fontSize: '0.75rem',
+                      color: product.stock > 0 ? 'var(--text-secondary)' : 'var(--danger)',
+                      fontWeight: 600,
+                      marginTop: '0.2rem',
+                    }}
+                  >
+                    {product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
+                  </span>
+                </div>
                 <button
                   className="btn-add-cart"
                   onClick={() => addToCart(product)}
+                  disabled={product.stock <= 0}
                   data-testid={`add-to-cart-button-${product.id}`}
+                  style={{
+                    opacity: product.stock <= 0 ? 0.5 : 1,
+                    cursor: product.stock <= 0 ? 'not-allowed' : 'pointer',
+                  }}
                 >
-                  Add to Cart
+                  {product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
                 </button>
               </div>
             </div>
