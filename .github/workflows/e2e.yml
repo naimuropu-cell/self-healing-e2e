@@ -1,0 +1,60 @@
+name: E2E & Self-Healing Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Playwright E2E & Self-Healing Test Suite
+    timeout-minutes: 20
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js Runtime
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: Install Target App Dependencies
+        run: npm --prefix app ci
+
+      - name: Install E2E Test Dependencies
+        run: npm --prefix tests ci
+
+      - name: Install Playwright Chromium with OS Dependencies
+        run: npx --prefix tests playwright install --with-deps chromium
+
+      - name: Verify Target App Production Build
+        run: npm run app:build
+
+      - name: Run Full Playwright Test Suite
+        run: npm test
+
+      - name: Display Self-Healing Audit Summary
+        if: always()
+        run: npm run heal:report
+
+      - name: Upload Playwright HTML Test Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: tests/playwright-report/
+          retention-days: 30
+
+      - name: Upload Test Results, Traces & Healing Audit
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: tests/test-results/
+          retention-days: 14

@@ -4,6 +4,7 @@
 
 **An Autonomous, Closed-Loop QA Engine with Self-Healing Test Locators & Automated Defect Triage**
 
+[![CI/CD Pipeline](https://github.com/naimuropu-cell/self-healing-e2e/actions/workflows/e2e.yml/badge.svg)](https://github.com/naimuropu-cell/self-healing-e2e/actions/workflows/e2e.yml)
 [![Playwright](https://img.shields.io/badge/Playwright-v1.50-2EAD33?logo=playwright&logoColor=white)](https://playwright.dev/)
 [![React](https://img.shields.io/badge/React-v18.3-61DAFB?logo=react&logoColor=black)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/Vite-v6.1-646CFF?logo=vite&logoColor=white)](https://vite.dev/)

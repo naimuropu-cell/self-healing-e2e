@@ -25,10 +25,11 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
   ],
+  updateSnapshots: 'missing',
   webServer: {
     command: 'npm run dev --prefix ../app',
     url: 'http://localhost:5188',
-    reuseExistingServer: true,
+    reuseExistingServer: !process.env.CI,
     timeout: 60 * 1000,
   },
 });
