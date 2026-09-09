@@ -1,0 +1,26 @@
+{
+  "name": "self-healing-e2e",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Autonomous closed-loop QA & E2E self-healing test automation pipeline",
+  "scripts": {
+    "app:dev": "npm --prefix app run dev",
+    "app:build": "npm --prefix app run build",
+    "app:preview": "npm --prefix app run preview",
+    "test:e2e": "npm --prefix tests run test",
+    "test:e2e:ui": "npm --prefix tests run test:ui",
+    "test:report": "npm --prefix tests run test:report",
+    "dev": "npm run app:dev",
+    "test": "npm run test:e2e"
+  },
+  "keywords": [
+    "playwright",
+    "self-healing",
+    "e2e",
+    "qa-automation",
+    "vite",
+    "react"
+  ],
+  "author": "naimuropu-cell",
+  "license": "MIT"
+}
