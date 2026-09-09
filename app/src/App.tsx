@@ -77,6 +77,7 @@ export const App: React.FC = () => {
 
   // Order Placement State
   const [confirmedOrder, setConfirmedOrder] = useState<Order | null>(null);
+  const [isSubmittingOrder, setIsSubmittingOrder] = useState(false);
 
   // Authentication Handlers
   const handleLogin = (e: React.FormEvent) => {
@@ -163,32 +164,44 @@ export const App: React.FC = () => {
   // Checkout Submission
   const handlePlaceOrder = (e: React.FormEvent) => {
     e.preventDefault();
-    const newOrder: Order = {
-      id: `ORD-${Math.floor(100000 + Math.random() * 900000)}`,
-      items: [...cart],
-      shipping: { ...shipping },
-      total: finalCartTotal,
-      promoCode: appliedPromo || undefined,
-      discount: promoDiscountAmount,
-      placedAt: new Date().toLocaleTimeString(),
-      status: 'confirmed',
-    };
+    if (isSubmittingOrder) return;
+    setIsSubmittingOrder(true);
 
-    // Decrement stock for purchased items
-    setProducts((prevProducts) =>
-      prevProducts.map((prod) => {
-        const purchasedItem = cart.find((item) => item.product.id === prod.id);
-        if (purchasedItem) {
-          return { ...prod, stock: Math.max(0, prod.stock - purchasedItem.quantity) };
-        }
-        return prod;
-      })
-    );
+    const orderItems = [...cart];
+    const orderShipping = { ...shipping };
+    const orderTotal = finalCartTotal;
+    const orderPromo = appliedPromo || undefined;
+    const orderDiscount = promoDiscountAmount;
 
-    setConfirmedOrder(newOrder);
-    setCart([]);
-    setIsCheckoutOpen(false);
-    setIsCartOpen(false);
+    setTimeout(() => {
+      const newOrder: Order = {
+        id: `ORD-${Math.floor(100000 + Math.random() * 900000)}`,
+        items: orderItems,
+        shipping: orderShipping,
+        total: orderTotal,
+        promoCode: orderPromo,
+        discount: orderDiscount,
+        placedAt: new Date().toLocaleTimeString(),
+        status: 'confirmed',
+      };
+
+      // Decrement stock for purchased items
+      setProducts((prevProducts) =>
+        prevProducts.map((prod) => {
+          const purchasedItem = orderItems.find((item) => item.product.id === prod.id);
+          if (purchasedItem) {
+            return { ...prod, stock: Math.max(0, prod.stock - purchasedItem.quantity) };
+          }
+          return prod;
+        })
+      );
+
+      setConfirmedOrder(newOrder);
+      setCart([]);
+      setIsCheckoutOpen(false);
+      setIsCartOpen(false);
+      setIsSubmittingOrder(false);
+    }, 400);
   };
 
   // 1. Auth View (Not logged in)
@@ -654,9 +667,24 @@ export const App: React.FC = () => {
                 <span data-testid="checkout-total-price">${finalCartTotal.toFixed(2)}</span>
               </div>
 
-              <button type="submit" className="btn-primary" data-testid="complete-purchase-btn">
-                <span>Place Order (${finalCartTotal.toFixed(2)})</span>
-                <CheckCircle2 size={18} />
+              <button
+                type="submit"
+                className="btn-primary"
+                data-testid="complete-purchase-btn"
+                disabled={isSubmittingOrder || finalCartTotal <= 0}
+                style={{
+                  opacity: isSubmittingOrder ? 0.7 : 1,
+                  cursor: isSubmittingOrder ? 'not-allowed' : 'pointer',
+                }}
+              >
+                {isSubmittingOrder ? (
+                  <span>Processing Order...</span>
+                ) : (
+                  <>
+                    <span>Place Order (${finalCartTotal.toFixed(2)})</span>
+                    <CheckCircle2 size={18} />
+                  </>
+                )}
               </button>
             </form>
           </div>
