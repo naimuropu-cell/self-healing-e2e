@@ -1,5 +1,5 @@
 import { Page, Locator, expect } from '@playwright/test';
-import { SelfHealingEngine, SelfHealingDescriptor } from '../utils/self-healing';
+import { SelfHealingEngine, SelfHealingDescriptor } from 'playwright-autoheal';
 
 export interface CheckoutDetails {
   fullName: string;

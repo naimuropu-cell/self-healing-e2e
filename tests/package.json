@@ -8,6 +8,9 @@
     "test:headed": "playwright test --headed",
     "test:report": "playwright show-report"
   },
+  "dependencies": {
+    "playwright-autoheal": "file:../packages/playwright-autoheal"
+  },
   "devDependencies": {
     "@playwright/test": "^1.50.1",
     "typescript": "~5.7.2"

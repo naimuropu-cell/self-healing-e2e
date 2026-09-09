@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { LoginPage, CatalogPage } from '../pages';
-import { SelfHealingEngine, SelfHealingDescriptor } from '../utils/self-healing';
+import { SelfHealingEngine, SelfHealingDescriptor } from 'playwright-autoheal';
 
 test.describe('Autonomous Self-Healing Engine Demonstration', () => {
   test('should resolve primary locator quickly when valid without triggering fallback', async ({ page }) => {

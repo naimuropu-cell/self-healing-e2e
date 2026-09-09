@@ -157,12 +157,47 @@ $ npm run heal:pr
 
 > 🤖 **Nightly Autonomous Maintenance**: Configured in [`.github/workflows/auto-heal-pr.yml`](.github/workflows/auto-heal-pr.yml) to run daily at 03:00 UTC, automatically submitting PRs labeled `self-healing` and `qa-maintenance` whenever front-end code evolves.
 
+### 6. Decoupled Standalone NPM Package (`packages/playwright-autoheal`)
+The core self-healing locator engine is decoupled into a standalone, installable TypeScript library under [`packages/playwright-autoheal/`](packages/playwright-autoheal/) that any engineering team can add to any Playwright project:
+
+```typescript
+import { test } from '@playwright/test';
+import { SelfHealingEngine, SelfHealingDescriptor } from 'playwright-autoheal';
+
+test('resilient interaction across any project', async ({ page }) => {
+  const submitDescriptor: SelfHealingDescriptor = {
+    name: 'Submit Button',
+    primary: { type: 'testid', value: 'primary-submit' },
+    fallbacks: [
+      { type: 'role', value: 'button', options: { name: /submit/i } },
+      { type: 'css', value: '.btn-submit-action' }
+    ]
+  };
+
+  await SelfHealingEngine.click(page, submitDescriptor);
+});
+```
+
+- **Compiled Output**: Ready-to-publish ES2022/CommonJS builds with full TypeScript `.d.ts` declaration maps.
+- **Built-in CLI**: Run `npx playwright-autoheal report` or `npx playwright-autoheal patch` directly in any project.
+
 ---
 
 ## 📁 Repository Structure
 
 ```
 self-healing-e2e/
+├── packages/
+│   └── playwright-autoheal/      # Decoupled Standalone NPM Package (TypeScript + CLI)
+│       ├── src/
+│       │   ├── engine.ts         # Multi-strategy locator resolution & audit recording
+│       │   ├── patcher.ts        # Source code auto-patcher for Page Objects
+│       │   ├── reporter.ts       # CLI terminal audit reporting utility
+│       │   └── types.ts          # Core data contracts & configuration schemas
+│       ├── dist/                 # Compiled JavaScript and .d.ts type declarations
+│       ├── package.json          # Independent library metadata & peer dependencies
+│       └── README.md             # Package documentation & standalone quickstart
+│
 ├── app/                          # Target Web Application (Vite + React + TypeScript)
 │   ├── src/
 │   │   ├── App.tsx               # State-managed Auth, Catalog, Cart, & Checkout flows
@@ -176,9 +211,12 @@ self-healing-e2e/
 │
 ├── tests/                        # E2E Test Automation Suite (Playwright + TypeScript)
 │   ├── e2e/
-│   │   └── checkout.spec.ts      # Full end-to-end shopping & checkout journey
+│   │   ├── checkout.spec.ts      # Full end-to-end shopping & checkout journey
+│   │   ├── self-healing.spec.ts  # Live resilience & mutation recovery test suite
+│   │   └── visual.spec.ts        # Visual regression baseline snapshot suite
+│   ├── pages/                    # Page Object Model abstraction layer
 │   ├── playwright.config.ts      # Automated webServer spawn, trace & video capture
-│   └── package.json
+│   └── package.json              # Consumes 'playwright-autoheal' directly
 │
 ├── bug-reports/                  # Defect Tracking & Autonomous Regression Harness
 │   ├── README.md                 # Autonomous triage protocol and guidelines
@@ -238,6 +276,7 @@ Run these scripts from the repository root:
 |---|---|
 | `npm run dev` / `npm run app:dev` | Starts the target Vite application locally at `http://localhost:5188` |
 | `npm run app:build` | Type-checks and compiles the target application for production |
+| `npm run package:build` | Compiles TypeScript and builds `dist/` for decoupled `playwright-autoheal` package |
 | `npm test` / `npm run test:e2e` | Runs full Playwright test suite (auto-manages Vite server) |
 | `npm run test:e2e:ui` | Launches Playwright's interactive UI Test Runner |
 | `npm run test:report` | Opens the latest Playwright HTML Test Report |

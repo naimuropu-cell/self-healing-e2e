@@ -38,6 +38,11 @@ jobs:
       - name: Install Target App Dependencies
         run: npm --prefix app ci
 
+      - name: Install & Build Decoupled playwright-autoheal Library
+        run: |
+          npm --prefix packages/playwright-autoheal ci
+          npm run package:build
+
       - name: Install E2E Test Dependencies
         run: npm --prefix tests ci
 

@@ -1,0 +1,41 @@
+{
+  "name": "playwright-autoheal",
+  "version": "1.0.0",
+  "description": "Autonomous self-healing locator engine with multi-strategy fallbacks, audit ledger, and auto-patching for Playwright",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "playwright-autoheal": "dist/bin/autoheal.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "playwright",
+    "self-healing",
+    "e2e",
+    "testing",
+    "automation",
+    "resilience",
+    "locator",
+    "qa",
+    "page-objects"
+  ],
+  "author": "Md. Naimur Rahman Apu <naimuropu@gmail.com>",
+  "license": "MIT",
+  "peerDependencies": {
+    "@playwright/test": ">=1.30.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.50.1",
+    "@types/node": "^22.13.0",
+    "typescript": "~5.7.2"
+  }
+}
