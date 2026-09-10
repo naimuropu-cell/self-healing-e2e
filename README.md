@@ -120,7 +120,7 @@ On every push and pull request, GitHub Actions compiles test diagnostics and ren
 
 | Metric | Value | Status |
 |---|---|---|
-| **E2E & Self-Healing Tests** | 18 Tests Passed across 7 Suites (including AI Recovery) | 🟢 100% Green |
+| **E2E & Self-Healing Tests** | 20 Tests Passed across 8 Suites (including AI Recovery & Fixtures) | 🟢 100% Green |
 | **Self-Healing Interventions** | Transparently Recovered via Fallbacks | 🛡️ Audited |
 | **Defect Ingestion Coverage** | 3/3 Tickets Reproduced & Verified | 🐞 100% Verified |
 | **Visual Regression Baseline** | 4 Viewports Compared | 📸 0 Pixel Drift |
@@ -194,6 +194,31 @@ When all conventional and programmatic fallbacks are exhausted (e.g. completely 
 - **Dual-Engine Architecture**:
   - **Remote LLMs**: Seamlessly connect to Google Gemini (`GEMINI_API_KEY`) or OpenAI (`OPENAI_API_KEY`) for visual & DOM reasoning.
   - **Embedded Local Semantic Engine**: Zero-dependency token similarity, contextual relevance ranking, and interactive role weighting that operates offline and in CI/CD without API keys.
+
+### 8. Custom Playwright Fixture & Transparent Proxy (`tests/e2e/fixture.spec.ts`)
+For teams that prefer idiomatic Playwright test syntax over explicit utility wrappers, `playwright-autoheal` provides an extended test fixture (`extendWithAutoHeal`) and transparent page proxy (`autoheal`):
+
+```typescript
+import { test as base, expect } from '@playwright/test';
+import { extendWithAutoHeal, SelfHealingDescriptor } from 'playwright-autoheal';
+
+const test = extendWithAutoHeal(base);
+
+test('zero-boilerplate resilient interaction', async ({ autoheal }) => {
+  await autoheal.goto('/');
+
+  // Pass either SelfHealingDescriptors or native selectors:
+  await autoheal.fill(usernameDescriptor, 'testuser');
+  await autoheal.click(loginBtnDescriptor);
+
+  // Directly obtain a resilient Playwright Locator:
+  const cartBtn = await autoheal.heal(addToCartDescriptor);
+  await expect(cartBtn).toBeVisible();
+});
+```
+
+- **Seamless Proxy**: Inherits all standard Playwright `Page` methods (`goto`, `waitForURL`, `getByTestId`, `screenshot`, etc.) while automatically routing descriptor targets through `SelfHealingEngine`.
+- **Zero Configuration**: Ready to drop into existing test suites with standard Playwright runners.
 
 ---
 

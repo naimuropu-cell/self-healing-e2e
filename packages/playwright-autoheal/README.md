@@ -63,6 +63,39 @@ await SelfHealingEngine.fill(page, descriptor, 'hello@example.com');
 
 ---
 
+## 🎭 Custom Playwright Fixture (`autoheal`)
+
+Instead of explicitly wrapping every action with `SelfHealingEngine.click(page, ...)`, `playwright-autoheal` provides a custom fixture and transparent proxy that extends Playwright's `test`:
+
+```typescript
+import { test as base, expect } from '@playwright/test';
+import { extendWithAutoHeal, SelfHealingDescriptor } from 'playwright-autoheal';
+
+// Extend base Playwright test with autoheal fixture
+const test = extendWithAutoHeal(base);
+
+test('transparent self-healing via fixture', async ({ autoheal }) => {
+  // Use all standard Page methods seamlessly:
+  await autoheal.goto('/');
+
+  // Pass either SelfHealingDescriptors or native strings:
+  const submitDescriptor: SelfHealingDescriptor = {
+    name: 'Submit Button',
+    primary: { type: 'testid', value: 'stale-submit-btn' },
+    fallbacks: [{ type: 'role', value: 'button', options: { name: 'Submit' } }]
+  };
+
+  // Resilient click (auto-routed to SelfHealingEngine):
+  await autoheal.click(submitDescriptor);
+
+  // Or resolve to native Playwright Locator:
+  const locator = await autoheal.heal(submitDescriptor);
+  await expect(locator).toBeVisible();
+});
+```
+
+---
+
 ## 🤖 AI-Powered Semantic Locator Recovery
 
 When all deterministic fallbacks fail, `playwright-autoheal` triggers **Phase 3 AI Semantic Recovery**:
