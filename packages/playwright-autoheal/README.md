@@ -63,6 +63,28 @@ await SelfHealingEngine.fill(page, descriptor, 'hello@example.com');
 
 ---
 
+## 🤖 AI-Powered Semantic Locator Recovery
+
+When all deterministic fallbacks fail, `playwright-autoheal` triggers **Phase 3 AI Semantic Recovery**:
+
+```typescript
+const descriptor: SelfHealingDescriptor = {
+  name: 'Submit Order Button',
+  primary: { type: 'testid', value: 'broken-selector' },
+  fallbacks: [{ type: 'css', value: '.non-existent-class' }],
+  aiHint: 'Final purchase confirmation button in checkout modal',
+};
+
+// If all fallbacks fail, AI inspects visible DOM candidates and recovers the element!
+await SelfHealingEngine.click(page, descriptor);
+```
+
+### Dual-Mode Architecture
+1. **Remote LLM Adapter**: Set `GEMINI_API_KEY` (Gemini 1.5/2.0) or `OPENAI_API_KEY` (GPT-4o-mini) to query frontier LLMs for element disambiguation.
+2. **Embedded Local Semantic Engine**: Built-in zero-dependency intent ranking and token similarity model. Works offline and in CI/CD without API keys!
+
+---
+
 ## 🛠️ CLI & Code Patching
 
 `playwright-autoheal` tracks all healed runtime events in `tests/test-results/healing-audit.json`.

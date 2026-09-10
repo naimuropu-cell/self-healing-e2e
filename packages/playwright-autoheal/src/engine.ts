@@ -8,6 +8,7 @@ import {
   EngineConfig,
   ResolveResult,
 } from './types';
+import { recoverElementWithAI } from './ai-recovery';
 
 export function getDefaultAuditFilePath(): string {
   if (process.env.HEALING_AUDIT_FILE) {
@@ -161,11 +162,36 @@ export class SelfHealingEngine {
       }
     }
 
-    // 3. Exhausted All Strategies
+    // 3. AI-Powered Semantic Locator Recovery
+    const aiRecovery = await recoverElementWithAI(page, descriptor, config);
+    if (aiRecovery) {
+      recordHealingEvent(
+        {
+          timestamp: new Date().toISOString(),
+          elementName: descriptor.name,
+          primaryFailed: descriptor.primary,
+          healedWith: aiRecovery.strategy,
+          pageUrl: page.url(),
+          resolutionTimeMs: Date.now() - startTime,
+          status: 'HEALED_SUCCESSFULLY',
+          recoveryEngine: aiRecovery.recoveryEngine,
+        },
+        config.auditFilePath
+      );
+
+      return {
+        locator: aiRecovery.locator,
+        healed: true,
+        strategy: aiRecovery.strategy,
+        durationMs: Date.now() - startTime,
+      };
+    }
+
+    // 4. Exhausted All Strategies
     throw new Error(
-      `[Self-Healing Engine] Critical: All locator strategies failed for "${descriptor.name}". Evaluated ${
+      `[Self-Healing Engine] Critical: All locator strategies (including AI Semantic Recovery) failed for "${descriptor.name}". Evaluated ${
         descriptor.fallbacks.length + 1
-      } strategies without locating target DOM element.`
+      } strategies and AI DOM analysis without locating target DOM element.`
     );
   }
 

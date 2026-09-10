@@ -26,7 +26,10 @@ function displayReport() {
       console.log(`[#${idx + 1}] Target: "${entry.elementName}"`);
       console.log(`  ⏱️  Timestamp:       ${entry.timestamp}`);
       console.log(`  ❌ Failed Primary:  [${entry.primaryFailed.type}] "${entry.primaryFailed.value}"`);
-      console.log(`  ✅ Healed Fallback: [${entry.healedWith.type}] "${entry.healedWith.value}"`);
+      console.log(`  ✅ Healed Fallback: [${entry.healedWith.type}] "${entry.healedWith.value}"${entry.healedWith.confidence ? ` (confidence: ${(entry.healedWith.confidence * 100).toFixed(0)}%)` : ''}`);
+      if (entry.recoveryEngine) {
+        console.log(`  🧠 Recovery Engine: ${entry.recoveryEngine.toUpperCase()}`);
+      }
       console.log(`  ⚡ Recovery Time:   ${entry.resolutionTimeMs}ms`);
       console.log(`  🌐 Page URL:        ${entry.pageUrl}`);
       console.log('----------------------------------------------------------------');

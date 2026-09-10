@@ -120,7 +120,7 @@ On every push and pull request, GitHub Actions compiles test diagnostics and ren
 
 | Metric | Value | Status |
 |---|---|---|
-| **E2E & Self-Healing Tests** | 16 Tests Passed across 6 Suites | 🟢 100% Green |
+| **E2E & Self-Healing Tests** | 18 Tests Passed across 7 Suites (including AI Recovery) | 🟢 100% Green |
 | **Self-Healing Interventions** | Transparently Recovered via Fallbacks | 🛡️ Audited |
 | **Defect Ingestion Coverage** | 3/3 Tickets Reproduced & Verified | 🐞 100% Verified |
 | **Visual Regression Baseline** | 4 Viewports Compared | 📸 0 Pixel Drift |
@@ -180,6 +180,20 @@ test('resilient interaction across any project', async ({ page }) => {
 
 - **Compiled Output**: Ready-to-publish ES2022/CommonJS builds with full TypeScript `.d.ts` declaration maps.
 - **Built-in CLI**: Run `npx playwright-autoheal report` or `npx playwright-autoheal patch` directly in any project.
+
+### 7. AI-Powered Semantic Locator Recovery (`tests/e2e/ai-healing.spec.ts`)
+When all conventional and programmatic fallbacks are exhausted (e.g. completely renamed test-ids, restructured CSS, and missing ARIA labels), `playwright-autoheal` engages **Phase 3 AI Semantic Recovery**:
+
+```bash
+⚠️ [Self-Healing Engine] Primary selector failed for "Add to Cart Button (Hardware Item)" (testid: "broken-ghost-add-to-cart-v9"). Triggering fallback heuristics...
+🤖 [AI Semantic Recovery] Initiating AI locator inference for "Add to Cart Button (Hardware Item)"...
+🧠 [AI Semantic Recovery] Successfully inferred and verified target for "Add to Cart Button (Hardware Item)" via ai-local ([data-testid="add-to-cart-button-prod-001"], confidence: 98%) in 64ms
+  ok 1 [chromium] › e2e/ai-healing.spec.ts › should recover element using AI semantic inference (10.2s)
+```
+
+- **Dual-Engine Architecture**:
+  - **Remote LLMs**: Seamlessly connect to Google Gemini (`GEMINI_API_KEY`) or OpenAI (`OPENAI_API_KEY`) for visual & DOM reasoning.
+  - **Embedded Local Semantic Engine**: Zero-dependency token similarity, contextual relevance ranking, and interactive role weighting that operates offline and in CI/CD without API keys.
 
 ---
 

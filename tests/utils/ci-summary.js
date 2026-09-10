@@ -38,7 +38,7 @@ function generateMarkdownSummary() {
 
     auditEntries.forEach((entry, i) => {
       const failed = `\`${entry.primaryFailed.type}\`: \`${entry.primaryFailed.value}\``;
-      const healed = `\`${entry.healedWith.type}\`: \`${entry.healedWith.value}\``;
+      const healed = `\`${entry.healedWith.type}\`: \`${entry.healedWith.value}\`${entry.recoveryEngine ? ` (${entry.recoveryEngine.toUpperCase()})` : ''}`;
       lines.push(
         `| ${i + 1} | **${entry.elementName}** | ${failed} | ${healed} | \`${entry.resolutionTimeMs}ms\` | 🟢 Healed |`
       );
