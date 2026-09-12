@@ -178,3 +178,31 @@ const reportPath = writeHtmlDashboard({
   title: 'Custom Telemetry Report',
 });
 ```
+
+
+## 🏥 Locator Health & Fragility Scoring
+
+Audit selectors and Page Objects for brittle patterns:
+
+```bash
+# Run health audit via CLI
+npx playwright-autoheal health
+
+# Audit specific directory with strict failure policy
+npx playwright-autoheal health --target tests/pages --strict
+```
+
+Programmatic usage:
+
+```typescript
+import { analyzeLocatorHealth, scoreSelector } from 'playwright-autoheal';
+
+// Single selector scoring
+const evaluation = scoreSelector('div > div:nth-child(2) > button', 'css');
+console.log(evaluation.score); // 40 (BRITTLE)
+console.log(evaluation.issues); // ['Deep CSS nesting...', 'Positional index...']
+
+// Directory health audit
+const summary = analyzeLocatorHealth({ targetDir: 'tests/pages' });
+console.log(`Grade: ${summary.grade} (${summary.overallScore}/100)`);
+```

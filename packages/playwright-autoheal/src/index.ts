@@ -5,3 +5,4 @@ export * from './reporter';
 export * from './ai-recovery';
 export * from './fixture';
 export * from './dashboard';
+export * from './health';

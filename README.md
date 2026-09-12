@@ -243,6 +243,46 @@ npm run heal:dashboard
 
 ---
 
+### 10. Locator Fragility & Health Scoring Analyzer (`npm run heal:health`)
+Statically audits all Page Objects and test specifications, evaluating selector stability against industry best practices. Generates an executive resilience grade (`A+` to `F`) and flags high-risk brittle selectors before they break in CI:
+
+```bash
+# Audit repository locators
+npm run heal:health
+
+# Strict CI validation (fails on critical brittle locators)
+npx playwright-autoheal health --strict
+
+# Machine-readable JSON telemetry
+npx playwright-autoheal health --json
+```
+
+```
+================================================================
+🏥   AUTONOMOUS QA: LOCATOR HEALTH & FRAGILITY AUDIT
+================================================================
+
+Overall Health Score : 99/100  [Grade: A+]
+Total Locators Scanned: 32
+Audited Directories  : tests/pages
+
+Breakdown by Resilience Tier:
+  🟢 Excellent (90-100%) : 31
+  🔵 Good      (75-89%)  : 1
+  🟡 Moderate  (50-74%)  : 0
+  🟠 Brittle   (25-49%)  : 0
+  🔴 Critical  (0-24%)   : 0
+
+🎉 Outstanding! Zero brittle or high-risk locators found across your test suite.
+```
+
+- **Heuristic Rubric**: Scores locators from 0 to 100% based on semantic stability (`data-testid` = 100%, `role` = 94%, `label`/`placeholder` = 88%, multi-strategy descriptors = +10 bonus).
+- **Fragility Detection**: Flags deep CSS hierarchies (`div > form > button`), positional indices (`:nth-child`), dynamic build hashes, and absolute XPath.
+- **Actionable Fix Guidance**: Provides targeted recommendations to upgrade brittle selectors to resilient test IDs or self-healing descriptors.
+
+
+---
+
 ## 📁 Repository Structure
 
 ```
@@ -344,6 +384,7 @@ Run these scripts from the repository root:
 | `npm run test:visual:update` | Re-generates visual regression baseline snapshots |
 | `npm run heal:report` | Displays the terminal self-healing locator audit report |
 | `npm run heal:dashboard` | Generates and opens interactive visual HTML telemetry dashboard |
+| `npm run heal:health` | Statically audits selector resilience and flags brittle locators |
 | `npm run heal:apply` | Auto-patches Page Objects with verified healed selectors |
 | `npm run heal:pr` | Automatically creates branch, commits healed selectors, and opens GitHub PR |
 | `npm run bug:triage` | Ingests defect tickets, verifies specs, and auto-scaffolds repro tests |

@@ -20,7 +20,8 @@
     "ci:summary": "node tests/utils/ci-summary.js",
     "dev": "npm run app:dev",
     "test": "npm run test:e2e",
-    "heal:dashboard": "node tests/utils/heal-dashboard.js --open"
+    "heal:dashboard": "node tests/utils/heal-dashboard.js --open",
+    "heal:health": "node tests/utils/heal-health.js"
   },
   "keywords": [
     "playwright",
