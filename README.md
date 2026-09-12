@@ -223,6 +223,10 @@ test('zero-boilerplate resilient interaction', async ({ autoheal }) => {
 ---
 
 ### 9. Interactive HTML Self-Healing Visual Dashboard (`npm run heal:dashboard`)
+
+<p align="center">
+  <img src="docs/images/autoheal-dashboard.png" alt="Playwright AutoHeal Visual Dashboard" width="100%" />
+</p>
 Generates a standalone, dark glassmorphic HTML telemetry dashboard for visual auditing of selector drifts, recovery latency, and AI semantic interventions:
 
 ```bash
