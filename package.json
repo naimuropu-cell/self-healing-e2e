@@ -19,7 +19,8 @@
     "bug:triage": "node tests/utils/defect-triage.js",
     "ci:summary": "node tests/utils/ci-summary.js",
     "dev": "npm run app:dev",
-    "test": "npm run test:e2e"
+    "test": "npm run test:e2e",
+    "heal:dashboard": "node tests/utils/heal-dashboard.js --open"
   },
   "keywords": [
     "playwright",

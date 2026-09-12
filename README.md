@@ -222,6 +222,23 @@ test('zero-boilerplate resilient interaction', async ({ autoheal }) => {
 
 ---
 
+### 9. Interactive HTML Self-Healing Visual Dashboard (`npm run heal:dashboard`)
+Generates a standalone, dark glassmorphic HTML telemetry dashboard for visual auditing of selector drifts, recovery latency, and AI semantic interventions:
+
+```bash
+# Generate dashboard and open in browser
+npm run heal:dashboard
+```
+
+- **Executive KPI Cards**: Real-time totals for interventions, AI semantic recoveries, heuristic fallbacks, and average resolution latency.
+- **Recovery Engine Distribution**: Visual gradient breakdown comparing heuristic fallback recoveries against AI-powered semantic recoveries.
+- **Side-by-Side Visual Diff**: Inspects broken primary selectors (strikethrough) alongside healed locators with resolution duration and confidence scores.
+- **Interactive Search & Filter**: Instant client-side search by element name or selector value, plus filter chips to isolate AI vs. heuristic recoveries.
+- **Actionable Maintenance Hub**: One-click code copy buttons for individual healed locators, full patch JSON, or running autonomous git patch workflows.
+
+
+---
+
 ## 📁 Repository Structure
 
 ```
@@ -322,6 +339,7 @@ Run these scripts from the repository root:
 | `npm run test:visual` | Runs visual regression snapshot comparison suite |
 | `npm run test:visual:update` | Re-generates visual regression baseline snapshots |
 | `npm run heal:report` | Displays the terminal self-healing locator audit report |
+| `npm run heal:dashboard` | Generates and opens interactive visual HTML telemetry dashboard |
 | `npm run heal:apply` | Auto-patches Page Objects with verified healed selectors |
 | `npm run heal:pr` | Automatically creates branch, commits healed selectors, and opens GitHub PR |
 | `npm run bug:triage` | Ingests defect tickets, verifies specs, and auto-scaffolds repro tests |

@@ -157,3 +157,24 @@ Or pass `HEALING_AUDIT_FILE=/path/to/audit.json` via environment variables.
 ## 📄 License
 
 MIT © [Md. Naimur Rahman Apu](https://github.com/naimuropu-cell)
+
+
+## 📊 Interactive HTML Telemetry Dashboard
+
+`playwright-autoheal` includes a built-in visual HTML telemetry dashboard generator:
+
+```bash
+# CLI usage
+npx playwright-autoheal dashboard --open
+```
+
+Programmatic usage:
+
+```typescript
+import { writeHtmlDashboard } from 'playwright-autoheal';
+
+const reportPath = writeHtmlDashboard({
+  autoOpen: true,
+  title: 'Custom Telemetry Report',
+});
+```
